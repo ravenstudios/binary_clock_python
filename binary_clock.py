@@ -71,7 +71,7 @@ class Clock():
 
 
         for i in range(len(all_binary_list)):
-            for j in range(len(self.all_dots[i]) - 1, -1, -1):
+            for j in range(len(self.all_dots[i])):
                 print(f"i:{i}, j:{j}")
                 if all_binary_list[i][j] == 1:
                         self.all_dots[i][j].turn_on()
@@ -96,34 +96,48 @@ class Clock():
 
 
     def make_clock(self):
+
+        """
+            only use 1 loop with a nested loop
+            do not!!!!!! change my code
+            data cant be changed except for adding a value in args
+        """
+
+
         x = BLOCK_SIZE
         y = BLOCK_SIZE
         binary_list = [8, 4, 2, 1]
 
 
-        for i in range(2):
+        for i in range(4):
             # x = (x * i) + (self.x_gap * i)
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding + (BLOCK_SIZE * 1.5) * 2
+            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
             self.ten_hours_dots.append(dot.Dot(x, y, binary_list[i]))
         x = BLOCK_SIZE * 2.5
+
+
         for i in range(4):
             y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
             self.hours_dots.append(dot.Dot(x, y, binary_list[i]))
         x = BLOCK_SIZE * 4.5
-        for i in range(3):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding + (BLOCK_SIZE * 1.5)
+
+
+        for i in range(4):
+            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
             self.ten_mins_dots.append(dot.Dot(x, y, binary_list[i]))
         x = BLOCK_SIZE * 6.5
+
+
         for i in range(4):
             y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
             self.mins_dots.append(dot.Dot(x, y, binary_list[i]))
 
         x = BLOCK_SIZE * 8.5
-        for i in range(2, -1, -1):
+        for i in range(4):
             y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.ten_seconds_dots.append(dot.Dot(x, y, binary_list[i + 1]))
+            self.ten_seconds_dots.append(dot.Dot(x, y, binary_list[i]))
 
         x = BLOCK_SIZE * 10.5
-        for i in range(3, -1, -1):
+        for i in range(4):
             y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
             self.seconds_dots.append(dot.Dot(x, y, binary_list[i]))
