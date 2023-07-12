@@ -5,89 +5,29 @@ import datetime
 
 class Clock():
     def __init__(self):
-        self.time = datetime.datetime.now()
-        self.ten_hours_dots = []
-        self.hours_dots = []
-        self.ten_mins_dots = []
-        self.mins_dots = []
-        self.ten_seconds_dots = []
-        self.seconds_dots = []
-        self.all_dots = [self.ten_hours_dots, self.hours_dots, self.ten_mins_dots, self.mins_dots, self.ten_seconds_dots, self.seconds_dots]
+
+        self.all_dots = [[], [], [], [], [], []]
         self.x_gap = BLOCK_SIZE
         self.y_gap = BLOCK_SIZE // 2
         self.y_padding = BLOCK_SIZE
 
-        self.th = 0
-        self.h = 0
-        self.tm = 0
-        self.m = 0
-        self.ts = 0
-        self.s = 0
-
-
+        self.binary_list = [8, 4, 2, 1]
+        self.list_size = [1, 3, 2, 3, 2, 3]
+        self.y_offset = [3, 0, 1.5, 0, 1.5, 0]
+        self.x_offset = [1, 2.1, 4, 5.1, 7, 8.1]
+        self.display_number_list_offset = [2, 0, 1, 0, 1, 0]
 
         self.make_clock()
 
 
-
-
-    def convert_dec_to_bin(self, dec):
-        # print(f"dec:{dec}")
-        bin = [8, 4, 2, 1]
-        result = []
-        for b in range(len(bin)):
-            if dec >= bin[b]:
-                result.append(1)
-                dec = dec - bin[b]
-            else:
-                result.append(0)
-        # print(result)
-        return result
-
-
-
     def update(self):
-        print(self.time.strftime("%H:%M:%S"))
 
-        self.time = datetime.datetime.now()
-
-
-        self.th = int(self.time.strftime("%H")) // 10
-        self.h = int(self.time.strftime("%H"))   % 10
-        self.tm = int(self.time.strftime("%M")) // 10
-        self.m = int(self.time.strftime("%M"))  % 10
-        self.ts = int(self.time.strftime("%S")) // 10
-        self.s = int(self.time.strftime("%S")) % 10
-        # print(f"{self.th}{self.h}:{self.tm}{self.m}:{self.ts}{self.s}")
-
-
-        th_binary_list = self.convert_dec_to_bin(self.th)
-        h_binary_list = self.convert_dec_to_bin(self.h)
-        tm_binary_list = self.convert_dec_to_bin(self.tm)
-        m_binary_list = self.convert_dec_to_bin(self.m)
-        ts_binary_list = self.convert_dec_to_bin(self.ts)
-        s_binary_list = self.convert_dec_to_bin(self.s)
-        all_binary_list = [th_binary_list, h_binary_list, tm_binary_list, m_binary_list, ts_binary_list, s_binary_list]
-
-
-        for i in range(len(all_binary_list)):
-            for j in range(len(self.all_dots[i])):
-                print(f"i:{i}, j:{j}")
-                if all_binary_list[i][j] == 1:
-                        self.all_dots[i][j].turn_on()
-                else:
-                    self.all_dots[i][j].turn_off()
-
+        self.tick()
 
         for list in self.all_dots:
             for dot in list:
                 dot.update()
 
-
-    def turn_all_off(self):
-        for list in self.all_dots:
-            for dot in list:
-                dot.turn_off()
 
     def draw(self, surface):
         for list in self.all_dots:
@@ -97,47 +37,25 @@ class Clock():
 
     def make_clock(self):
 
-        """
-            only use 1 loop with a nested loop
-            do not!!!!!! change my code
-            data cant be changed except for adding a value in args
-        """
+        for i in range(len(self.all_dots)):
+            for j in range(self.list_size[i], -1, -1):
+                y = (BLOCK_SIZE * j) + (j * self.y_gap) + self.y_padding + (BLOCK_SIZE * self.y_offset[i])
+                x = (BLOCK_SIZE * (self.x_offset[i]))
+                self.all_dots[i].append(dot.Dot(x, y, self.binary_list[j + self.display_number_list_offset[i]]))
 
+    def tick(self):
+        d = datetime.datetime.now()
 
-        x = BLOCK_SIZE
-        y = BLOCK_SIZE
-        binary_list = [8, 4, 2, 1]
+        all_binary_list = [
+            f'{(int(d.strftime("%H")) // 10):02b}'[::-1],
+            f'{(int(d.strftime("%H")) % 10):04b}'[::-1],
+            f'{(int(d.strftime("%M")) // 10):03b}'[::-1],
+            f'{(int(d.strftime("%M")) % 10):04b}'[::-1],
+            f'{(int(d.strftime("%S")) // 10):03b}'[::-1],
+            f'{(int(d.strftime("%S")) % 10):04b}'[::-1]
+            ]
 
-
-        for i in range(4):
-            # x = (x * i) + (self.x_gap * i)
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.ten_hours_dots.append(dot.Dot(x, y, binary_list[i]))
-        x = BLOCK_SIZE * 2.5
-
-
-        for i in range(4):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.hours_dots.append(dot.Dot(x, y, binary_list[i]))
-        x = BLOCK_SIZE * 4.5
-
-
-        for i in range(4):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.ten_mins_dots.append(dot.Dot(x, y, binary_list[i]))
-        x = BLOCK_SIZE * 6.5
-
-
-        for i in range(4):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.mins_dots.append(dot.Dot(x, y, binary_list[i]))
-
-        x = BLOCK_SIZE * 8.5
-        for i in range(4):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.ten_seconds_dots.append(dot.Dot(x, y, binary_list[i]))
-
-        x = BLOCK_SIZE * 10.5
-        for i in range(4):
-            y = (BLOCK_SIZE * i) + (i * self.y_gap) + self.y_padding
-            self.seconds_dots.append(dot.Dot(x, y, binary_list[i]))
+        for i in range(len(all_binary_list) - 1, -1, -1):
+            for j in range(len(self.all_dots[i]) - 1, -1, -1):
+                self.all_dots[i][j].turn_on() if all_binary_list[i][j] == "1" else self.all_dots[i][j].turn_off()
+            
